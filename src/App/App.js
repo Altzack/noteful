@@ -5,11 +5,11 @@ import NoteListNav from "../NoteListNav/NoteListNav";
 import NotePageNav from "../NotePageNav/NotePageNav";
 import NoteListMain from "../NoteListMain/NoteListMain";
 import NotePageMain from "../NotePageMain/NotePageMain";
-import AddFolder from "../AddFolder/AddFolder";
-import AddNote from "../AddNote/AddNote";
 import ApiContext from "../ApiContext";
 import config from "../config";
 import "./App.css";
+import AddFolder from "../AddFolder/AddFolder";
+import AddNote from "../AddNote/AddNote";
 
 class App extends Component {
   state = {
@@ -85,9 +85,9 @@ class App extends Component {
     const value = {
       notes: this.state.notes,
       folders: this.state.folders,
-      addFolder: this.handleAddFolder,
-      addNote: this.handleAddNote,
       deleteNote: this.handleDeleteNote,
+      addNote: this.handleAddNote,
+      addFolder: this.handleAddFolder,
     };
     return (
       <ApiContext.Provider value={value}>
