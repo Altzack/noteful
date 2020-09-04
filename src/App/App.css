@@ -1,7 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 .App {
-  --custom-font: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+  text-align: left;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #a7aaa9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.header {
+  position: fixed;
+  height: 120px;
+  background-color: #6c7471;
+  width: 70vw;
+  top: 0;
+  left: 30.3vw;
+}
+
+.header h2 {
+  font-size: 2em;
+  padding: 40px 0 40px 50px;
+}
+
+.link {
+  text-decoration: none;
+  color: White;
+}
+
+.link:hover {
+  color: #5a82f0;
+}
+
+.App {
+  --custom-font: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   display: grid;
   grid-template-areas: "sidebar header" "sidebar main";
@@ -11,14 +78,14 @@
 }
 
 .App__nav {
-  background-color: #0b1b32;
+  background-color: #2a2e2e;
   color: #fff;
   grid-area: sidebar;
   height: 100vh;
   overflow: auto;
 }
 
-.App__header {
+/* .App__header {
   background-color: #0b1f3a;
   color: #bdbdbd;
   font-family: var(--custom-font);
@@ -26,14 +93,14 @@
   padding-left: 16px;
   padding-top: 32px;
   text-shadow: 2px 1px 2px black;
-}
+} */
 
-.App__header a {
+/* .App__header a {
   color: #bdbdbd;
-}
+} */
 
 .App__main {
-  background-color: #102541;
+  background-color: #a7aaa9;
   grid-area: main;
   height: calc(100vh - 120px);
   overflow: auto;

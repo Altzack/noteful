@@ -3,18 +3,19 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Note from "../Note/Note";
 import CircleButton from "../CircleButton/CircleButton";
-import ApiContext from "../ApiContext";
-import { getNotesForFolder } from "../notes-helpers";
+import AppContext from "../AppContext";
+import { getNotesForFolder } from "../Notes-Helper";
+import PropTypes from "prop-types";
 import "./NoteListMain.css";
-import NoteError from "../NoteError/NoteError";
 
-export default class NoteListMain extends React.Component {
+class NoteListMain extends React.Component {
   static defaultProps = {
     match: {
       params: {},
     },
   };
-  static contextType = ApiContext;
+
+  static contextType = AppContext;
 
   render() {
     const { folderId } = this.props.match.params;
@@ -25,9 +26,7 @@ export default class NoteListMain extends React.Component {
         <ul>
           {notesForFolder.map((note) => (
             <li key={note.id}>
-              <NoteError>
-                <Note id={note.id} name={note.name} modified={note.modified} />
-              </NoteError>
+              <Note id={note.id} name={note.name} modified={note.modified} />
             </li>
           ))}
         </ul>
@@ -47,3 +46,11 @@ export default class NoteListMain extends React.Component {
     );
   }
 }
+
+NoteListMain.propTypes = {
+  id: PropTypes.number,
+  name: PropTypes.string,
+  modified: PropTypes.number,
+};
+
+export default NoteListMain;

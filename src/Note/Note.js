@@ -1,16 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ApiContext from "../ApiContext";
+import AppContext from "../AppContext";
 import config from "../config";
-import "./Note.css";
+// import { format } from 'date-fns'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-export default class Note extends React.Component {
+import "./Notes.css";
+
+class Note extends React.Component {
   static defaultProps = {
     onDeleteNote: () => {},
   };
-  static contextType = ApiContext;
+
+  static contextType = AppContext;
 
   handleClickDelete = (e) => {
     e.preventDefault();
@@ -38,6 +40,7 @@ export default class Note extends React.Component {
   render() {
     const { name, id, modified } = this.props;
     return (
+      // <AppContext.Consumer>
       <div className="Note">
         <h2 className="Note__title">
           <Link to={`/note/${id}`}>{name}</Link>
@@ -51,14 +54,18 @@ export default class Note extends React.Component {
         </button>
         <div className="Note__dates">
           <div className="Note__dates-modified">
-            Modified{" "}
-            <span className="Date">{format(modified, "Do MMM YYYY")}</span>
+            Modified <span className="Date">{modified}</span>
           </div>
         </div>
       </div>
     );
   }
 }
+
 Note.propTypes = {
+  onDeleteNote: PropTypes.func,
   name: PropTypes.string,
+  modified: PropTypes.string,
 };
+
+export default Note;

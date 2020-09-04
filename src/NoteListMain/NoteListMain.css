@@ -1,4 +1,3 @@
-
 .NoteListMain ul {
   list-style-type: none;
   margin: 0;
@@ -14,6 +13,6 @@
   margin: 0 auto 20px;
 }
 .NoteListMain__add-note-button:hover {
-  background-color: #29862e;
+  background-color: #5a82f0;
   color: white;
 }
