@@ -21,7 +21,7 @@ class AddFolder extends React.Component {
       name: e.target["folder-section"].value,
     };
 
-    fetch(`${config.API_ENDPOINT}api/folders`, {
+    fetch(`${config.API_ENDPOINT}/folders`, {
       method: "POST",
       body: JSON.stringify(newfolder),
       headers: {
