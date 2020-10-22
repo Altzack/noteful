@@ -20,14 +20,15 @@ class NotePageMain extends React.Component {
 
   render() {
     const { notes = [] } = this.context;
+    const { name, id, modified } = this.props;
     const { noteId } = this.props.match.params;
     const note = findNote(notes, noteId) || { content: "" };
     return (
       <section className="NotePageMain">
         <Note
-          id={note.id}
-          name={note.title}
-          modified={note.modified}
+          id={id}
+          name={name}
+          modified={modified}
           onDeleteNote={this.handleDeleteNote}
         />
         <div className="NotePageMain__content">
