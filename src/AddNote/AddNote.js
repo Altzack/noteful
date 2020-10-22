@@ -20,7 +20,7 @@ class AddNote extends React.Component {
         touched: false,
       },
       content: "",
-      folderId: "",
+      folderid: "",
     };
   }
 
@@ -49,7 +49,7 @@ class AddNote extends React.Component {
       })
       .then((note) => {
         this.context.addNote(note);
-        this.props.history.push(`/folder/${note.folderId}`);
+        this.props.history.push(`/folder/${note.folderid}`);
       })
       .catch((error) => {
         console.log(error);
@@ -115,7 +115,7 @@ AddNote.propTypes = {
   history: PropTypes.object,
   title: PropTypes.string,
   content: PropTypes.string,
-  folderId: PropTypes.number,
+  folderid: PropTypes.number,
   modified: PropTypes.number,
 };
 

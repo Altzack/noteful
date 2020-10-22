@@ -43,7 +43,7 @@ class Note extends React.Component {
       // <AppContext.Consumer>
       <div className="Note">
         <h2 className="Note__title">
-          <Link to={`/note/${id}`}>{title}</Link>
+          <Link to={`/note/${id}`}>{note.title}</Link>
         </h2>
         <button
           className="Note__delete"
