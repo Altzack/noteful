@@ -18,10 +18,10 @@ class AddFolder extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const newfolder = {
-      title: e.target["folder-section"].value,
+      name: e.target["folder-section"].value,
     };
 
-    fetch(`${config.API_ENDPOINT}/folders`, {
+    fetch(`${config.API_ENDPOINT}api/folders`, {
       method: "POST",
       body: JSON.stringify(newfolder),
       headers: {
