@@ -32,7 +32,7 @@ class AddNote extends React.Component {
     const getNote = {
       title: e.target["name-section"].value,
       content: e.target["content"].value,
-      folderId: e.target["folder-select"].value,
+      folderid: e.target["folder-select"].value,
       modified: new Date(),
     };
 
@@ -93,7 +93,7 @@ class AddNote extends React.Component {
               <option value="">...</option>
               {folders.map((folder) => (
                 <option key={folder.id} value={folder.id}>
-                  {foldertitle}
+                  {folder.title}
                 </option>
               ))}
             </select>
