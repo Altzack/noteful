@@ -1,22 +1,37 @@
-import React, { Component } from "react";
-import { Route, Link } from "react-router-dom";
-import NotefulContext from "../NotefulContext/NotefulContext";
-import Header from "../Header/Header";
-import NoteListMain from "../NoteListMain/NoteListMain";
-import NotePageMain from "../NotePageMain/NotePageMain";
+import React from "react";
+import { Route } from "react-router-dom";
+import "./App.css";
+import Header from "../Header";
+import AddFolder from "../AddFolder/AddFolder";
+import AddNote from "../AddNote/AddNote";
 import NoteListNav from "../NoteListNav/NoteListNav";
 import NotePageNav from "../NotePageNav/NotePageNav";
-import AddNote from "../AddNote/AddNote";
-import AddFolder from "../AddFolder/AddFolder";
-import { getNotesForFolder, findNote, findFolder } from "../note-helpers";
-import "./App.css";
+import NoteListMain from "../NoteListMain/NoteListMain";
+import NotePageMain from "../NotePageMain/NotePageMain";
+import AppContext from "../AppContext";
 import config from "../config";
-import NotefulError from "../NotefulError/NotefulError";
 
-class App extends Component {
-  state = {
-    notes: [],
-    folders: [],
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      notes: [],
+      folders: [],
+    };
+  }
+
+  setNotes = (notes) => {
+    this.setState({
+      notes,
+      error: null,
+    });
+  };
+
+  setFolders = (folders) => {
+    this.setState({
+      folders,
+      error: null,
+    });
   };
 
   componentDidMount() {
@@ -39,24 +54,6 @@ class App extends Component {
       });
   }
 
-  handleAddFolder = (folder) => {
-    this.setState({
-      folders: [...this.state.folders, folder],
-    });
-  };
-
-  handleAddNote = (note) => {
-    this.setState({
-      notes: [...this.state.notes, note],
-    });
-  };
-
-  handleDeleteNote = (noteId) => {
-    this.setState({
-      notes: this.state.notes.filter((note) => note.id !== noteId),
-    });
-  };
-
   renderNavRoutes() {
     return (
       <>
@@ -64,8 +61,9 @@ class App extends Component {
           <Route exact key={path} path={path} component={NoteListNav} />
         ))}
         <Route path="/note/:noteId" component={NotePageNav} />
-        <Route path="/add-folder" component={NotePageNav} />
-        <Route path="/add-note" component={NotePageNav} />
+        {["/add-folder", "/add-note"].map((path) => (
+          <Route path={path} key={path} component={NotePageNav} />
+        ))}
       </>
     );
   }
@@ -77,32 +75,46 @@ class App extends Component {
           <Route exact key={path} path={path} component={NoteListMain} />
         ))}
         <Route path="/note/:noteId" component={NotePageMain} />
-        <Route path="/add-folder" component={AddFolder} />
         <Route path="/add-note" component={AddNote} />
+        <Route path="/add-folder" component={AddFolder} />
       </>
     );
   }
 
+  deleteNote = (noteId) => {
+    this.setState({
+      notes: this.state.notes.filter((note) => note.id !== noteId),
+    });
+  };
+
+  handleAddNote = (note) => {
+    this.setState({
+      notes: [...this.state.notes, note],
+    });
+  };
+
+  handleAddFolder = (folder) => {
+    this.setState({
+      folders: [...this.state.folders, folder],
+    });
+  };
+
   render() {
-    const value = {
+    const contextValue = {
       notes: this.state.notes,
       folders: this.state.folders,
       addFolder: this.handleAddFolder,
       addNote: this.handleAddNote,
-      deleteNote: this.handleDeleteNote,
+      deleteNote: this.deleteNote,
     };
     return (
-      <NotefulContext.Provider value={value}>
-        <div className="App">
-          <NotefulError>
-            <nav className="App__nav">{this.renderNavRoutes()}</nav>
-          </NotefulError>
-          <Header className="App_header" />
-          <NotefulError>
-            <main className="App__main">{this.renderMainRoutes()}</main>
-          </NotefulError>
-        </div>
-      </NotefulContext.Provider>
+      <div className="App">
+        <AppContext.Provider value={contextValue}>
+          <nav className="App__nav">{this.renderNavRoutes()}</nav>
+          <main className="App__main">{this.renderMainRoutes()}</main>
+          <Header />
+        </AppContext.Provider>
+      </div>
     );
   }
 }
