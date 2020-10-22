@@ -18,7 +18,7 @@ class AddFolder extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const newfolder = {
-      name: e.target["folder-section"].value,
+      title: e.target["folder-section"].value,
     };
 
     fetch(`${config.API_ENDPOINT}/folders`, {
@@ -65,7 +65,7 @@ class AddFolder extends React.Component {
 
 AddFolder.propTypes = {
   history: PropTypes.object,
-  name: PropTypes.string,
+  title: PropTypes.string,
 };
 
 export default AddFolder;

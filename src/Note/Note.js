@@ -38,12 +38,12 @@ class Note extends React.Component {
   };
 
   render() {
-    const { name, id, modified } = this.props;
+    const { title, id, modified } = this.props;
     return (
       // <AppContext.Consumer>
       <div className="Note">
         <h2 className="Note__title">
-          <Link to={`/note/${id}`}>{name}</Link>
+          <Link to={`/note/${id}`}>{title}</Link>
         </h2>
         <button
           className="Note__delete"
@@ -64,7 +64,7 @@ class Note extends React.Component {
 
 Note.propTypes = {
   onDeleteNote: PropTypes.func,
-  name: PropTypes.string,
+  title: PropTypes.string,
   modified: PropTypes.string,
 };
 

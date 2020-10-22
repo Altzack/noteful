@@ -1,3 +1,3 @@
 export default {
-  API_ENDPOINT: `https://guarded-springs-72353.herokuapp.com/api`,
+  API_ENDPOINT: `https://pacific-bayou-97395.herokuapp.com/api`,
 };
