@@ -1,8 +1,9 @@
+
 .NotePageNav__back-button {
-  margin: 45px 20px 25px auto;
+  margin: 45px 20px 25px auto
 }
 .NotePageNav__back-button:hover {
-  background-color: #5a82f0;
+  background-color: #FFB72F;
 }
 
 .NotePageNav__folder-name {

@@ -1,71 +1,65 @@
-import React from "react";
+import React, { Component } from "react";
 import NotefulForm from "../NotefulForm/NotefulForm";
-import AppContext from "../AppContext";
-import config from "../config";
-import PropTypes from "prop-types";
 import "./AddFolder.css";
-import NotefulError from "../NotefulError";
+import config from "../config";
+import NotefulContext from "../context";
 
-class AddFolder extends React.Component {
-  static defaultProps = {
-    history: {
-      push: () => {},
-    },
-  };
+export default class AddFolder extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+    };
+  }
 
-  static contextType = AppContext;
+  static contextType = NotefulContext;
+
+  setName(name) {
+    this.setState({ name });
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const newfolder = {
-      title: e.target["folder-section"].value,
+    const newFolder = {
+      title: this.state.name,
     };
-
-    fetch(`${config.API_ENDPOINT}/folders`, {
+    fetch(`${config.API_ENDPOINT}/folders/`, {
       method: "POST",
-      body: JSON.stringify(newfolder),
       headers: {
         "content-type": "application/json",
       },
+      body: JSON.stringify(newFolder),
     })
-      .then((foldersRes) => {
-        if (!foldersRes.ok)
-          return foldersRes.json().then((e) => Promise.reject(e));
-        return foldersRes.json();
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else throw new Error(res.status);
       })
       .then((folder) => {
         this.context.addFolder(folder);
         this.props.history.push("/");
       })
-
-      .catch((error) => {
-        console.error({ error });
-      });
+      .catch((error) => console.error({ error }));
   };
 
   render() {
     return (
-      <div className="AddFolder">
-        <h2 className="folderH2">Create A Folder</h2>
+      <section className="AddFolder">
+        <h2>Create a folder</h2>
         <NotefulForm onSubmit={this.handleSubmit}>
-          <div>
-            <label htmlFor="name">Name</label>
-            <input type="text" id="name" name="folder-section" required />
+          <div className="field">
+            <label htmlFor="folder-name-input">Name</label>
+            <input
+              type="text"
+              id="folder-name-input"
+              onChange={(e) => this.setName(e.target.value)}
+            />
           </div>
           <div className="buttons">
-            <NotefulError>
-              <button type="submit">Add folder</button>
-            </NotefulError>
+            <button type="submit">Add folder</button>
           </div>
         </NotefulForm>
-      </div>
+      </section>
     );
   }
 }
-
-AddFolder.propTypes = {
-  history: PropTypes.object,
-  title: PropTypes.string,
-};
-
-export default AddFolder;

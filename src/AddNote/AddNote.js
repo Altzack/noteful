@@ -1,96 +1,88 @@
-import React from "react";
-import config from "../config";
+import React, { Component } from "react";
 import NotefulForm from "../NotefulForm/NotefulForm";
-import AppContext from "../AppContext";
-import PropTypes from "prop-types";
-import NotefulError from "../NotefulError";
 import "./AddNote.css";
-class AddNote extends React.Component {
-  static defaultProps = {
-    history: {
-      push: () => {},
-    },
-  };
+import config from "../config";
+import NotefulContext from "../context";
 
+export default class AddNote extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: {
-        value: "",
-        touched: false,
-      },
+      folderId: "",
+      name: "",
       content: "",
-      folderid: "",
     };
   }
+  static contextType = NotefulContext;
 
-  static contextType = AppContext;
+  chooseId(folderId) {
+    this.setState({ folderId: Number(folderId) });
+  }
+
+  setName(name) {
+    this.setState({ name });
+  }
+
+  setContent(content) {
+    this.setState({ content });
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
-
-    const getNote = {
-      title: e.target["name-section"].value,
-      content: e.target["content"].value,
-      folderid: e.target["folder-select"].value,
+    const newNote = {
+      title: this.state.name,
+      content: this.state.content,
+      folderid: this.state.folderId,
       modified: new Date(),
     };
-
     fetch(`${config.API_ENDPOINT}/notes`, {
       method: "POST",
-      body: JSON.stringify(getNote),
       headers: {
         "content-type": "application/json",
       },
+      body: JSON.stringify(newNote),
     })
-      .then((notesRes) => {
-        if (!notesRes.ok) return notesRes.json().then((e) => Promise.reject(e));
-        return notesRes.json();
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else throw new Error(res.status);
       })
       .then((note) => {
         this.context.addNote(note);
-        this.props.history.push(`/folder/${note.folderid}`);
+        this.props.history.push("/");
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => console.error({ error }));
   };
 
-  validateName = () => {
-    const name = this.state.name.value.trim();
-    if (name.length === 0) {
-      return "Name is required";
-    } else if (name.length < 3) {
-      return "Name must be at least 3 characters long";
-    }
-  };
-  updateName(name) {
-    this.setState({ name: { value: name, touched: true } });
-  }
   render() {
-    const { folders = [] } = this.context;
+    const { folders } = this.props;
     return (
-      <div className="AddNote">
-        <h2 className="noteH2">Create A Note</h2>
+      <section className="AddNote">
+        <h2>Create a note</h2>
         <NotefulForm onSubmit={this.handleSubmit}>
           <div className="field">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="note-name-input">Name</label>
             <input
               type="text"
-              id="name"
-              name="name-section"
-              onChange={(e) => this.updateName(e.target.value)}
-              required
+              id="note-name-input"
+              onChange={(e) => this.setName(e.target.value)}
             />
           </div>
           <div className="field">
-            <label htmlFor="content">Content</label>
-            <textarea id="content" name="content" />
+            <label htmlFor="note-content-input">Content</label>
+            <input
+              type="text"
+              id="note-content-input"
+              onChange={(e) => this.setContent(e.target.value)}
+            />
           </div>
           <div className="field">
-            <label htmlFor="folder-select">Folder</label>
-            <select id="folder-select" name="folder-select" required>
-              <option value="">...</option>
+            <label htmlFor="note-folder-select">Folder</label>
+            <select
+              id="note-folder-select"
+              onChange={(e) => this.chooseId(e.target.value)}
+            >
+              <option value={null}>...</option>
               {folders.map((folder) => (
                 <option key={folder.id} value={folder.id}>
                   {folder.title}
@@ -99,24 +91,10 @@ class AddNote extends React.Component {
             </select>
           </div>
           <div className="buttons">
-            <NotefulError>
-              <button type="submit" to="/" disabled={this.validateName()}>
-                Add Note
-              </button>
-            </NotefulError>
+            <button type="submit">Add note</button>
           </div>
         </NotefulForm>
-      </div>
+      </section>
     );
   }
 }
-
-AddNote.propTypes = {
-  history: PropTypes.object,
-  title: PropTypes.string,
-  content: PropTypes.string,
-  folderid: PropTypes.number,
-  modified: PropTypes.number,
-};
-
-export default AddNote;
