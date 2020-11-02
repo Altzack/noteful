@@ -1,60 +1,66 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./Note.css";
+import NotefulContext from "../NotefulContext";
 import config from "../config";
-import NotefulContext from "../context";
+// import { format } from 'date-fns'
+import PropTypes from "prop-types";
+import "./Notes.css";
 
-export default class Note extends Component {
+class Note extends React.Component {
+  static defaultProps = {
+    onDeleteNote: () => {},
+  };
+
   static contextType = NotefulContext;
 
-  deleteNoteRequest = (id) => {
-    console.log(this.props);
-    fetch(`${config.API_ENDPOINT}/note/${id}`, {
+  handleClickDelete = (e) => {
+    e.preventDefault();
+    const note_id = this.props.id;
+
+    fetch(`${config.API_ENDPOINT}/api/notes/${note_id}`, {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
-        Authorization: `Bearer ${process.env.REACT_APP_API_KEY}`,
       },
     })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.status);
-        }
-      })
       .then(() => {
-        this.context.deleteNote(id);
-        this.props.history.push("/");
+        this.context.deleteNote(note_id);
+        // allow parent to perform extra behaviour
+        this.props.onDeleteNote(note_id);
       })
-      .catch((error) => console.error({ error }));
+      .catch((error) => {
+        console.error({ error });
+      });
   };
 
   render() {
+    const { title, id, modified } = this.props;
     return (
       <div className="Note">
         <h2 className="Note__title">
-          <Link to={`/note/${this.props.id}`}>{this.props.name}</Link>
+          <Link to={`/note/${id}`}>{title}</Link>
         </h2>
         <button
           className="Note__delete"
           type="button"
-          onClick={() => this.deleteNoteRequest(this.props.id)}
+          onClick={this.handleClickDelete}
         >
-          <FontAwesomeIcon icon="trash-alt" /> remove
-        </button>
-        <button className="Note__delete" type="button">
-          <Link to={`/note/update/${this.props.id}`}> update</Link>
+          {" "}
+          remove
         </button>
         <div className="Note__dates">
           <div className="Note__dates-modified">
-            Modified{" "}
-            <span className="Date">
-              {format(this.props.modified, "Do MMM YYYY")}
-            </span>
+            Modified <span className="Date">{modified}</span>
           </div>
         </div>
       </div>
     );
   }
 }
+
+Note.propTypes = {
+  onDeleteNote: PropTypes.func,
+  title: PropTypes.string,
+};
+
+export default Note;

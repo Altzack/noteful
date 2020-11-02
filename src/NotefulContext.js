@@ -1,9 +1,11 @@
 import React from 'react'
 
-export default React.createContext({
-  notes: [],
+const NotefulContext = React.createContext({
   folders: [],
+  notes:[],
   addFolder: () => {},
   addNote: () => {},
   deleteNote: () => {},
 })
+
+export default NotefulContext

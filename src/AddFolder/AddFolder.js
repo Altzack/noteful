@@ -1,65 +1,119 @@
-import React, { Component } from "react";
-import NotefulForm from "../NotefulForm/NotefulForm";
-import "./AddFolder.css";
-import config from "../config";
-import NotefulContext from "../context";
+import React from 'react'
+import NotefulForm from '../NotefulForm/NotefulForm'
+import NotefulContext from '../NotefulContext'
+import config from '../config'
 
-export default class AddFolder extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: "",
-    };
-  }
+import './AddFolder.css'
+import NotefulError from '../NotefulError'
+import ValidationError from '../ValidationError/ValidationError'
 
-  static contextType = NotefulContext;
 
-  setName(name) {
-    this.setState({ name });
-  }
+class AddFolder extends React.Component{
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const newFolder = {
-      title: this.state.name,
-    };
-    fetch(`${config.API_ENDPOINT}/folders/`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(newFolder),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else throw new Error(res.status);
-      })
-      .then((folder) => {
-        this.context.addFolder(folder);
-        this.props.history.push("/");
-      })
-      .catch((error) => console.error({ error }));
-  };
+    static defaultProps = {
+        history: {
+          push: () => { },
+        }
+    }
+      
+    constructor(props) {
+        super(props);
+        this.state = {
+          title: {
+            value: '',
+            touched:false
+          },
+          errorMessage: null
+          
+        }
+    }
 
-  render() {
-    return (
-      <section className="AddFolder">
-        <h2>Create a folder</h2>
-        <NotefulForm onSubmit={this.handleSubmit}>
-          <div className="field">
-            <label htmlFor="folder-name-input">Name</label>
-            <input
-              type="text"
-              id="folder-name-input"
-              onChange={(e) => this.setName(e.target.value)}
-            />
-          </div>
-          <div className="buttons">
-            <button type="submit">Add folder</button>
-          </div>
-        </NotefulForm>
-      </section>
-    );
-  }
+    static contextType = NotefulContext;
+
+    updateTitle(title) {
+        this.setState({title: {value: title, touched: true}});
+      }
+
+    handleSubmit = (e) => {
+    
+        e.preventDefault()
+        if (this.isNameValid()){
+            const newfolder = {
+                title: e.target['folder-section'].value
+              }
+      
+              fetch(`${config.API_ENDPOINT}/api/folders`, {
+                  method: 'POST',
+                  body: JSON.stringify(newfolder),
+                  headers: {
+                    'content-type': 'application/json',
+                  }
+                })
+                .then(foldersRes => {
+                  if (!foldersRes.ok)
+                      return foldersRes.json().then(e => Promise.reject(e)) //function that returns the Promise object that is rejected with a given reason.
+                  return foldersRes.json()
+                  })
+                  .then(folder => {
+                      this.context.addFolder(folder)
+                      this.props.history.push('/')
+                  })
+              
+              .catch(error => {
+                  console.error({error});
+              }) 
+        }
+    }
+
+    // function will validate that the name is longer than 3 characters
+   isNameValid = () => {
+    const title = this.state.title.value.trim();
+     if (title.length < 3) {
+        this.setState({errorMessage: "Title must be at least 3 characters long"});
+        return false;
+    }
+    return true;
 }
+
+    render(){
+ 
+        return(
+            <NotefulError>
+                <div className="AddFolder">
+                    <h2>Create A Folder</h2>
+                    <NotefulForm onSubmit={this.handleSubmit}>
+                            <div>
+                                <label htmlFor='title'>
+                                Title
+                                </label>
+                                <input 
+                                type='text' 
+                                id='title' 
+                                name="folder-section" 
+                                aria-required="true"
+                                aria-label="Title"
+                                onChange={e => this.updateTitle(e.target.value)}
+                                required  //requires the user inputs a name
+                                />
+                            </div>
+                            <div className='buttons'>
+                                <button 
+                                type='submit'
+                                >
+                                Add folder
+                                </button>
+                                {this.state.errorMessage && <ValidationError message={this.state.errorMessage}/>}
+                            </div>
+                    </NotefulForm>
+                </div>
+            </NotefulError>
+        )
+    }
+}
+
+// AddFolder.propTypes = {
+//     history: PropTypes.object,
+//     title: PropTypes.string.isRequired,
+// }
+
+export default AddFolder;

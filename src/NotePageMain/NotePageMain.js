@@ -1,26 +1,56 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Note from "../Note/Note";
-import "./NotePageMain.css";
+import NotefulContext from "../NotefulContext";
 
-export default function NotePageMain(props) {
-  return (
-    <section className="NotePageMain">
-      <Note
-        id={props.note.id}
-        name={props.note.title}
-        modified={props.note.modified}
-      />
-      <div className="NotePageMain__content">
-        {props.note.content.split(/\n \r|\n/).map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
-      </div>
-    </section>
-  );
+import "./NotePageMain.css";
+import PropTypes from "prop-types";
+
+class NotePageMain extends React.Component {
+  static defaultProps = {
+    match: {
+      params: {},
+    },
+  };
+
+  static contextType = NotefulContext;
+
+  handleDeleteNote = () => {
+    this.props.history.push(`/`);
+  };
+
+  render() {
+    let notes = this.context.notes.filter(
+      (note) => note.id === parseInt(this.props.match.params.note_id)
+    );
+
+    return notes.map((note) => {
+      return (
+        <section className="NotePageMain" key={note.id}>
+          <Note
+            id={note.id}
+            title={note.title}
+            modified={note.modified}
+            onDeleteNote={this.handleDeleteNote}
+            key={note.id}
+          />
+          <div className="NotePageMain__content">
+            <Fragment>
+              {note.content.split(/\n \r|\n/).map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
+            </Fragment>
+          </div>
+        </section>
+      );
+    });
+  }
 }
 
-NotePageMain.defaultProps = {
-  note: {
-    content: "",
-  },
+NotePageMain.propTypes = {
+  id: PropTypes.number,
+  title: PropTypes.string,
+  modified: PropTypes.number,
+  onDeleteNote: PropTypes.func,
 };
+
+export default NotePageMain;

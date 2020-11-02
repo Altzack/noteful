@@ -1,41 +1,61 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Note from "../Note/Note";
 import CircleButton from "../CircleButton/CircleButton";
+import NotefulContext from "../NotefulContext";
+import PropTypes from "prop-types";
 import "./NoteListMain.css";
 
-export default function NoteListMain(props) {
-  return (
-    <section className="NoteListMain">
-      <ul>
-        {props.notes.map((note) => (
-          <li key={note.id}>
-            <Note
-              id={note.id}
-              name={note.title}
-              modified={note.modified}
-              history={props.history}
-            />
-          </li>
-        ))}
-      </ul>
-      <div className="NoteListMain__button-container">
-        <CircleButton
-          tag={Link}
-          to="/add-note"
-          type="button"
-          className="NoteListMain__add-note-button"
-        >
-          <FontAwesomeIcon icon="plus" />
-          <br />
-          Note
-        </CircleButton>
-      </div>
-    </section>
-  );
+class NoteListMain extends React.Component {
+  static defaultProps = {
+    match: {
+      params: {},
+    },
+  };
+
+  static contextType = NotefulContext;
+
+  render() {
+    let notes = this.context.notes;
+    if (this.props.match.params.folder_id !== undefined) {
+      notes = this.context.notes.filter(
+        (note) => note.folder_id === parseInt(this.props.match.params.folder_id)
+      );
+    }
+    return (
+      <section className="NoteListMain">
+        <ul>
+          {notes.map((note) => (
+            <li key={note.id}>
+              <Note
+                id={note.id}
+                title={note.title}
+                modified={note.modified}
+                key={note.id}
+              />
+            </li>
+          ))}
+        </ul>
+        <div className="NoteListMain__button-container">
+          <CircleButton
+            tag={Link}
+            to="/add-note"
+            type="button"
+            className="NoteListMain__add-note-button"
+          >
+            <br />
+            Note
+          </CircleButton>
+        </div>
+      </section>
+    );
+  }
 }
 
-NoteListMain.defaultProps = {
-  notes: [],
+NoteListMain.propTypes = {
+  id: PropTypes.number,
+  title: PropTypes.string,
+  modified: PropTypes.number,
 };
+
+export default NoteListMain;
